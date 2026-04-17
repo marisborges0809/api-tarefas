@@ -1,103 +1,66 @@
-import { randomUUID } from 'node:crypto'
+import { Router } from 'express'
 import { Database } from './database.js'
-import { buildRoutePath } from './utils/build-route-path.js'
 
+const router = Router()
 const database = new Database()
 
-export const routes = [
-  {
-    method: 'GET',
-    path: buildRoutePath('/tasks'),
-    handler: (req, res) => {
-      const { search } = req.query
-      const tasks = database.select('tasks', search)
-      return res.end(JSON.stringify(tasks))
-    }
-  },
-  {
-    method: 'POST',
-    path: buildRoutePath('/tasks'),
-    handler: (req, res) => {
-      const { title, description } = req.body
+// GET
+router.get('/tasks', (req, res) => {
+  const tasks = database.select('tasks')
+  return res.json(tasks)
+})
 
-      if (!title || !description) {
-        return res.writeHead(400).end(
-          JSON.stringify({ message: 'Title and description are required' })
-        )
-      }
+// POST
+router.post('/tasks', (req, res) => {
+  const { title } = req.body
 
-      const task = {
-        id: randomUUID(),
-        title,
-        description,
-        completed_at: null,
-        created_at: new Date(),
-        updated_at: new Date(),
-      }
-
-      database.insert('tasks', task)
-      return res.writeHead(201).end()
-    }
-  },
-  {
-    method: 'PUT',
-    path: buildRoutePath('/tasks/:id'),
-    handler: (req, res) => {
-      const { id } = req.params
-      const { title, description } = req.body
-
-      if (!title && !description) {
-        return res.writeHead(400).end(
-          JSON.stringify({ message: 'Title or description must be informed' })
-        )
-      }
-
-      try {
-        database.update('tasks', id, {
-          title,
-          description,
-          updated_at: new Date()
-        })
-        return res.writeHead(204).end()
-      } catch {
-        return res.writeHead(404).end(JSON.stringify({ message: 'Task not found' }))
-      }
-    }
-  },
-  {
-    method: 'DELETE',
-    path: buildRoutePath('/tasks/:id'),
-    handler: (req, res) => {
-      const { id } = req.params
-
-      try {
-        database.delete('tasks', id)
-        return res.writeHead(204).end()
-      } catch {
-        return res.writeHead(404).end(JSON.stringify({ message: 'Task not found' }))
-      }
-    }
-  },
-  {
-    method: 'PATCH',
-    path: buildRoutePath('/tasks/:id/complete'),
-    handler: (req, res) => {
-      const { id } = req.params
-
-      try {
-        const [task] = database.select('tasks').filter(t => t.id === id)
-        
-        if (!task) throw new Error()
-
-        const isCompleted = !!task.completed_at
-        const completed_at = isCompleted ? null : new Date()
-
-        database.update('tasks', id, { completed_at, updated_at: new Date() })
-        
-        return res.writeHead(204).end()
-      } catch {
-        return res.writeHead(404).end(JSON.stringify({ message: 'Task not found' }))
-      }
-    }
+  const task = {
+    id: Date.now().toString(),
+    title,
+    completed: false,
+    created_at: new Date()
   }
-]
+
+  database.insert('tasks', task)
+
+  return res.status(201).json(task)
+})
+
+// PUT
+router.put('/tasks/:id', (req, res) => {
+  const { id } = req.params
+  const { title } = req.body
+
+  database.update('tasks', id, { title })
+
+  return res.send()
+})
+
+// DELETE
+router.delete('/tasks/:id', (req, res) => {
+  const { id } = req.params
+
+  database.delete('tasks', id)
+
+  return res.status(204).send()
+})
+
+// PATCH (seu diferencial)
+router.patch('/tasks/:id/complete', (req, res) => {
+  const { id } = req.params
+
+  const tasks = database.select('tasks')
+  const task = tasks.find(t => t.id === id)
+
+  if (!task) {
+    return res.status(404).json({ message: 'Tarefa não encontrada' })
+  }
+
+  database.update('tasks', id, {
+    completed: !task.completed
+  })
+
+  return res.send()
+})
+
+export { router }
