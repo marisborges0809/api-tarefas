@@ -1,30 +1,56 @@
-# 🚀 Task Manager API - Node.js
+# 🚀 API de Tarefas (Node.js + Express)
 
-Uma API robusta para gerenciamento de tarefas (CRUD) desenvolvida em Node.js puro, sem frameworks externos, focada em praticidade e performance. Este projeto foi desenvolvido como um desafio técnico para aplicar conceitos de HTTP, Streams, Buffers e manipulação de arquivos no Node.js.
+API RESTful desenvolvida para gerenciamento de tarefas, com operações CRUD completas e persistência de dados em arquivo JSON.
 
-## 🛠️ Funcionalidades
+## 🧠 Sobre o projeto
 
-- [x] **CRUD de Tarefas**: Criação, listagem, atualização e remoção.
-- [x] **Filtros Inteligentes**: Busca por título ou descrição através de Query Parameters.
-- [x] **Status de Conclusão**: Rota específica (PATCH) para marcar/desmarcar tarefas concluídas.
-- [x] **Importação em Massa**: Script dedicado para ler arquivos CSV e popular o banco de dados via Streams.
-- [x] **Persistência Local**: Banco de dados estruturado em arquivo JSON.
+Este projeto foi desenvolvido com o objetivo de praticar conceitos de backend utilizando Node.js e Express, incluindo:
 
-## 📁 Estrutura do Projeto
+- Criação de servidor HTTP
+- Definição de rotas REST
+- Manipulação de dados
+- Estruturação de aplicação backend
 
-- `src/server.js`: Ponto de entrada e lógica de roteamento.
-- `src/database.js`: Sistema de persistência em disco.
-- `src/routes.js`: Definição das rotas e regras de negócio.
-- `src/middlewares/`: Tratamento de dados (ex: conversão de JSON).
-- `src/utils/`: Utilitários para regex e extração de parâmetros.
-- `import-csv.js`: Script de integração para importação de dados.
+Inicialmente, a aplicação foi construída utilizando Node.js puro, permitindo compreender o funcionamento interno de conceitos como roteamento e middleware. Posteriormente, foi adaptada para Express.
 
-## 🚀 Como executar
+---
 
-### Pré-requisitos
-- [Node.js](https://nodejs.org/) (Versão 18 ou superior recomendada)
+## ⚙️ Tecnologias utilizadas
 
-### Instalação e Execução
-1. Clone o repositório:
-   ```bash
-   git clone [https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git](https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git)
+- Node.js
+- Express
+- JavaScript
+- JSON (persistência de dados)
+
+---
+
+## 🔥 Funcionalidades
+
+- Criar tarefas
+- Listar tarefas
+- Atualizar tarefas
+- Deletar tarefas
+- Marcar tarefa como concluída
+
+---
+
+## 📌 Rotas da API
+
+| Método | Rota | Descrição |
+|--------|------|----------|
+| GET | /tasks | Lista todas as tarefas |
+| POST | /tasks | Cria uma nova tarefa |
+| PUT | /tasks/:id | Atualiza uma tarefa |
+| DELETE | /tasks/:id | Remove uma tarefa |
+| PATCH | /tasks/:id/complete | Marca como concluída |
+
+---
+
+## ▶️ Como executar o projeto
+
+```bash
+# instalar dependências
+npm install
+
+# rodar servidor
+node src/server.js
